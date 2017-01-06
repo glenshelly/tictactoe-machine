@@ -18,24 +18,16 @@ import java.util.Scanner;
  * <p>
  * Assumptions about the assignment:
  * - The computer will always go first
- * - Depending on what positions the human plays in a game, the machine may or may not be able to play every last
- * combination.  However, being ever hopeful, it will continue to try.
- * For example, let's say that the application has already lost a game with a certain 5-move combination. It will
- * nevertheless select the same first 4 of those 5, being hopeful that, in this new game, the human will choose
- * something different on the human's 4th (last) move, therefore allowing the application to make a different choice on
- * it's final move of the game.  Of course, humans being humans, this may not happen.  However, our optimistic application
- * will continue to try.
- * - The game has not been optimized for winning; rather, it simply tries not to lose.  Improvements could quickly
- * be made so that it seizes the opportunity to win, based on prior experience.
+ * - The game has not been optimized for winning; rather, it simply avoids losing in the same way more than once
+ *   Improvements could quickly be made so that it seizes the opportunity to win, based on prior experience.
  * <p>
  * Assumptions made during the implementation
- * - English only interface: the interface has not be localized for multilingual support
- * - Performance: At present, readability and simplicity are more important than raw speed.  If performance targets
- * are identified that this implementation does not satisfy, additional effort could be made to improve performance.
- * Until then, such effort is not warranted, especially if it sacrifices readability.
+ * - English only interface: the interface has not been localized for multilingual support
+ * - Performance: At present, readability of code is prioritized over raw speed.  If performance targets
+ * are later identified that this implementation does not satisfy, additional effort could be made to improve performance.
  * - JDK version: The application supports Java 8
  * - Testing: This code does not include assertions or junit tests; such checks could be added per project standards
- * - Results are saved in simple text files
+ * - Results are saved in simple text files in the directory where the application is run.
  */
 public class PlayTheGame
 {
@@ -65,48 +57,66 @@ public class PlayTheGame
       {
 
          // Start a new game, with the application being the first player
+         // We'll build a new board each game; we could simply reset the existing board, if we become
+         // concerned about memory or performance in the future
          PlayerEnum currentPlayer = PlayerEnum.APPLICATION;
-         GameStatusInfo gameStatusInfo = new GameStatusInfo(currentPlayer, GameStatusEnum.ONGOING);
          IGameBoard gameBoard = gameManager.getNewGameBoard();
 
-         // Loop through the moves in this particular game
+
+         // Loop through the moves in this particular game, until the game is no longer on
          boolean isThisGameStillOn = true;
          while (isThisGameStillOn)
          {
+
+            // 1. Get the next move
             IGameMove gameMove = gameManager.getNextMove(currentPlayer, gameBoard);
+
+
+            // 2. Apply the move (maybe) and get the resulting status
+            GameStatusInfo gameStatusInfo;
             if (gameMove.isChooseToStop())
             {
-               // it could be that the human stopped, or that the application has given up
+               // It could be that the human quit, or that the application has given up
                gameStatusInfo = new GameStatusInfo(currentPlayer, GameStatusEnum.QUIT);
             }
             else
             {
-               // Make the specified move, and check the subsequent status
                gameBoard.applyChosenMove(gameMove);
                gameStatusInfo = gameManager.getGameStatusInfo(currentPlayer, gameBoard);
             }
 
-            // Give an update for the current status of the game
-            gameManager.renderStatusUpdate(gameStatusInfo);
 
+            // 3. Figure out what to do next, and do it
             isThisGameStillOn = !gameStatusInfo.getGameStatus().isGameOver();
+            if (isThisGameStillOn)
+            {
+               // Change to the next player, in preparation of the next time through the loop
+               currentPlayer = getNextPlayer(currentPlayer);
+            }
+            else
+            {
+               // Save the results of this game, and render the final status to the user
+               gameManager.saveResults(gameBoard, gameStatusInfo);
+               gameManager.renderFinalResults(gameStatusInfo, gameBoard);
+            }
 
-            // Change to the next player, in case we loop around to play another round, though we may not actually do so
-            currentPlayer = getNextPlayer(currentPlayer);
          }
 
 
-         // Save the results of this game, and render the final status to the user
-         gameManager.saveResults(gameBoard, gameStatusInfo);
-         gameManager.renderFinalResults(gameStatusInfo, gameBoard);
 
 
-         // Check if we should play another game
+         // Ask to play another game
          isStillPlayingAdditionalGames = inviteAnotherGame();
          if (isStillPlayingAdditionalGames)
          {
             RenderingHelper.renderOutputLine("\n");
             RenderingHelper.renderOutputLine("OK, let's play again!  I'll start...");
+         }
+         else
+         {
+            RenderingHelper.renderOutputLine("\n");
+            RenderingHelper.renderOutputLine("OK, so long, let's play again soon!");
+            RenderingHelper.renderOutputLine("\n");
          }
       }
    }

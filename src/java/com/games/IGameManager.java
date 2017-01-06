@@ -32,8 +32,6 @@ public interface IGameManager
    GameStatusInfo getGameStatusInfo(final PlayerEnum pFinalPlayer, IGameBoard pGameBoard);
 
 
-   void renderStatusUpdate(GameStatusInfo pGameStatusInfo);
-
    /**
     * Render the game board to the user
     * @param pIGameBoard

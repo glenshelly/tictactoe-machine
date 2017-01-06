@@ -18,6 +18,7 @@ import java.util.*;
  * - If I know what 13489 is a losing combination, I'd avoid trying it again, up to the last move that the
  * application made
  */
+@SuppressWarnings("JavaDoc")
 public class TicTacToeManager
       implements IGameManager
 {
@@ -94,6 +95,7 @@ public class TicTacToeManager
     * @param pGameBoard
     * @return a move made by the application
     */
+   @SuppressWarnings("JavaDoc")
    private IGameMove getGameMoveFromApplication(final IGameBoard pGameBoard)
    {
       /*
@@ -152,7 +154,7 @@ public class TicTacToeManager
    {
       if (fMovesToAvoid == null)
       {
-         // it should never happen that fMomvesToAvoid is null here, since we initialize it in the constructor
+         // it should never happen that fMovesToAvoid is null here, since we initialize it in the constructor
          // Still, as a matter of good form, we'll check for null here.
          initializeMovesToAvoidSet();
       }
@@ -340,12 +342,19 @@ public class TicTacToeManager
       return new GameStatusInfo(pMostRecentPlayer, gameStatus);
    }
 
-   public void renderStatusUpdate(GameStatusInfo pGameStatusInfo)
+
+   @Override
+   public void renderFinalResults(final GameStatusInfo pGameStatusInfo, IGameBoard pGameBoard)
    {
+      if (null == pGameBoard)
+      {
+         throw new IllegalArgumentException("game board may not be null");
+      }
       if (null == pGameStatusInfo)
       {
-         throw new IllegalArgumentException("gameStatusInfo may not be null");
+         throw new IllegalArgumentException("GameStatusInfo may not be null");
       }
+
       GameStatusEnum gameStatusEnum = pGameStatusInfo.getGameStatus();
       if (gameStatusEnum == null)
       {
@@ -357,8 +366,9 @@ public class TicTacToeManager
          throw new IllegalArgumentException("finalPlayer may not be null");
       }
 
-      String gameOverLead = "************* GAME OVER: ";
-      String outputLine = null;
+      // Get the text to render
+      final String gameOverLead = "************* GAME OVER: ";
+      final String outputLine;
       if (gameStatusEnum == GameStatusEnum.WON)
       {
          if (finalPlayer == PlayerEnum.APPLICATION)
@@ -377,10 +387,6 @@ public class TicTacToeManager
          String pithyPhrase = DRAW_PHRASES[getRandomInt(DRAW_PHRASES.length) - 1];
          outputLine = gameOverLead + "It's a Tie!  " + pithyPhrase;
       }
-      else if (gameStatusEnum == GameStatusEnum.ONGOING)
-      {
-         // nothing rendered in this case, for now
-      }
       else if (gameStatusEnum == GameStatusEnum.QUIT)
       {
          //
@@ -393,28 +399,18 @@ public class TicTacToeManager
             outputLine = gameOverLead + "Ok, we'll stop this particular game.";
          }
       }
-
-
-      if (outputLine != null)
+      else if (gameStatusEnum == GameStatusEnum.ONGOING)
       {
-         RenderingHelper.renderOutputLine(outputLine);
+         throw new IllegalStateException("Should not be rendering final status if the game is still ongoing");
+      }
+      else
+      {
+         // should never get here
+         throw new IllegalStateException("current gameStatus not handled - gameStatusEnum=" + gameStatusEnum);
       }
 
-   }
 
-
-   @Override
-   public void renderFinalResults(final GameStatusInfo pGameStatusInfo, IGameBoard pGameBoard)
-   {
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
-      if (null == pGameStatusInfo)
-      {
-         throw new IllegalArgumentException("GameStatusInfo may not be null");
-      }
-
+      RenderingHelper.renderOutputLine(outputLine);
       RenderingHelper.renderOutputLine("");
       RenderingHelper.renderOutputLine("Here's how the game ended: ");
       renderBoard(pGameBoard);
@@ -690,7 +686,7 @@ public class TicTacToeManager
 
    /**
     * @param pCellNumber
-    * @return the column that corresponds tothe given cell number
+    * @return the column that corresponds to the given cell number
     */
    private int getColumn(int pCellNumber)
    {
