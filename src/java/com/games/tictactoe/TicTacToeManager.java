@@ -5,6 +5,7 @@ import com.games.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of the GameManager contract.
@@ -123,7 +124,8 @@ public class TicTacToeManager
          Integer acceptedMove = null;
          for (Integer possibleNewCell : emptyCells)
          {
-            final String proposedMoveSet = getMoveSummaryConcise(tttBoard.getMoveHistory(), possibleNewCell);
+            Optional<Integer> optionalCell = Optional.of(possibleNewCell);
+            final String proposedMoveSet = getMoveSummaryConcise(tttBoard.getMoveHistory(), optionalCell);
             boolean isFoundInBadList = getMovesToAvoidSet().contains(proposedMoveSet);
             if (!isFoundInBadList)
             {
@@ -511,7 +513,9 @@ public class TicTacToeManager
       if (isRecordInfo)
       {
          final TicTacToeBoard tttBoard = getTttBoard(pGameBoard);
-         final String moveSummary = getMoveSummaryConcise(tttBoard.getMoveHistory(), null);
+         Optional<Integer> nullCell = Optional.ofNullable(null);
+
+         final String moveSummary = getMoveSummaryConcise(tttBoard.getMoveHistory(), nullCell);
          // Remove the last move, which would've been from the Human, since that won't come into play when
          // we're actually using the data to decide what move to make (and what moves to avoid)
          final String moveSummaryWithoutFinalHumanMove = moveSummary.substring(0, moveSummary.length() - 1);
@@ -696,30 +700,33 @@ public class TicTacToeManager
 
    /**
     * @param pMoves                   the moves so far
-    * @param pPossibleAdditionalValue might be null
+    * @param pPossibleAdditionalValue Possible (optional) value
     * @return a String of digits, in order
     */
-   private String getMoveSummaryConcise(final List<? extends IGameMove> pMoves, Integer pPossibleAdditionalValue)
+   private String getMoveSummaryConcise(final List<? extends IGameMove> pMoves, Optional<Integer> pPossibleAdditionalValue)
    {
-      List<Integer> cellList = new ArrayList<>();
-      for (IGameMove move : pMoves)
-      {
-         TicTacToeMove tttMove = (TicTacToeMove) move;
-         cellList.add(tttMove.getCellNumber());
-      }
-      if (pPossibleAdditionalValue != null)
-      {
-         cellList.add(pPossibleAdditionalValue);
-      }
+      //RenderingHelper.renderLoggingLine("getMoveSummary: try with additionalValue=" + pPossibleAdditionalValue);
+      List<Integer> cellList = pMoves.stream().map(gm -> ((TicTacToeMove) gm).getCellNumber())
+/*
+            .peek(num -> System.out.println("got in list num=" + num))
+*/
+            .collect(Collectors.toList());
+
+      pPossibleAdditionalValue.ifPresent(cellList::add);
 
       return getStringFromList(cellList);
    }
 
+
+   /**
+    * Concatenate the given integers in a String
+    * @param pCellList
+    * @return the String built from the given integers
+    */
    private String getStringFromList(final List<Integer> pCellList)
    {
       StringBuilder sb = new StringBuilder();
       pCellList.forEach(sb::append);
-      //RenderingHelper.renderLoggingLine("getMoveSummaryConcise: returnValue=" + sb.toString());
       return sb.toString();
    }
 
