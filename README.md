@@ -18,11 +18,14 @@ Running the program, and beating the machine at least once, will result in a dat
 
 ## Running this program with Gradle
 
+The project comes with a build.gradle file and wrappers that can be used to run the program using gradle, if you have it installed:
 ```
     > gradle -q
 ```
 
 ## Running this program with Ant
+
+The project comes with an ant build.xml file that can be used to run the program using ant, if you have ant installed.
 
 ```
     > ant
