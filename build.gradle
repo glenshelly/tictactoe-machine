@@ -1,0 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.games.PlayTheGame'
+
+run{
+    standardInput = System.in
+}
+
+/*
+java -cp build/classes/main com.games.PlayTheGame
+ */

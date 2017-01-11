@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <project name="glen" default="full" basedir=".">
 
-    <property name="java.dir" value="src/java"/>
-    <property name="build.dir" value="build"/>
+    <property name="java.dir" value="src/main/java"/>
+    <property name="build.dir" value="build/main"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir" value="${build.dir}/jar"/>
 
@@ -31,7 +31,7 @@
     </target>
 
     <target name="jar">
-        <mkdir dir="build/jar"/>
+        <mkdir dir="build/lib"/>
         <jar destfile="build/jar/games.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="com.games.PlayTheGame"/>
@@ -40,7 +40,7 @@
     </target>
 
     <target name="run">
-        <java jar="build/jar/games.jar" fork="true"/>
+        <java jar="build/libs/tictactoe-machine.jar" fork="true"/>
     </target>
 
     <target name="full" depends="compile, jar, run">

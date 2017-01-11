@@ -703,7 +703,8 @@ public class TicTacToeManager
     * @param pPossibleAdditionalValue Possible (optional) value
     * @return a String of digits, in order
     */
-   private String getMoveSummaryConcise(final List<? extends IGameMove> pMoves, Optional<Integer> pPossibleAdditionalValue)
+   private String getMoveSummaryConcise(final List<? extends IGameMove> pMoves,
+                                        Optional<Integer> pPossibleAdditionalValue)
    {
       //RenderingHelper.renderLoggingLine("getMoveSummary: try with additionalValue=" + pPossibleAdditionalValue);
       List<Integer> cellList = pMoves.stream().map(gm -> ((TicTacToeMove) gm).getCellNumber())
@@ -720,6 +721,7 @@ public class TicTacToeManager
 
    /**
     * Concatenate the given integers in a String
+    *
     * @param pCellList
     * @return the String built from the given integers
     */
