@@ -741,12 +741,21 @@ public class TicTacToeManager
       BufferedReader br = null;
       try
       {
-         br = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NAME_CONCISE), "utf-8"));
-         //  line like this: 13597
-         String thisLine;
-         while ((thisLine = br.readLine()) != null)
+         File conciseFile = new File(FILE_NAME_CONCISE);
+         boolean isFileExists = conciseFile.exists();
+         if (isFileExists)
          {
-            returnVal.add(thisLine);
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NAME_CONCISE), "utf-8"));
+            //  line like this: 13597
+            String thisLine;
+            while ((thisLine = br.readLine()) != null)
+            {
+               returnVal.add(thisLine);
+            }
+         }
+         else
+         {
+            // else, we may be here for the first time, so would not expect a file to exist
          }
       }
       catch (IOException e)
