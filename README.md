@@ -19,7 +19,7 @@ Running the program, and beating the machine at least once, will result in a dat
 ## Running this program with Gradle
 
 ```
-    > gradle -q run
+    > gradle -q
 ```
 
 ## Running this program with Ant
