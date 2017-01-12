@@ -13,20 +13,20 @@ please write each loosing combination on a separate line like this: (2,2)-(2,3)-
 the last move need to be changed the next time machine plays."
 ~~~
 
-## Running this program
+Running the program, and beating the machine at least once, will result in a data file containing bad moves being saved in the directory where the program is run from, as tttVerbose.log.
 
-The ant build file (build.xml) can be used to build and run the TicTacToe excercise, using the following ant targets: 
+
+## Running this program with Gradle
+
+The project comes with a build.gradle file and wrappers that can be used to run the program using gradle, if you have it installed:
 ```
-    > ant compile
-    > ant jar
-    > ant run
+    > gradle -q
 ```
-The "full" ant target will do it all, and is also the default, so: 
-```
-    > ant full 
-```
-or simply: 
+
+## Running this program with Ant
+
+The project comes with an ant build.xml file that can be used to run the program using ant, if you have ant installed.
+
 ```
     > ant
 ```
-A data file containing bad moves is saved in the directory where the program is run from, as tttVerbose.log.
