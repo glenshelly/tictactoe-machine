@@ -1,10 +1,31 @@
 package com.games.tictactoe;
 
 
-import com.games.*;
+import com.games.GameStatusEnum;
+import com.games.GameStatusInfo;
+import com.games.IGameBoard;
+import com.games.IGameManager;
+import com.games.IGameMove;
+import com.games.PlayerEnum;
+import com.games.RenderingHelper;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -610,12 +631,10 @@ public class TicTacToeManager
     */
    private void writeLogFiles(Set<String> pMoveSummaries)
    {
-      Writer conciseWriter = null;
-      Writer verboseWriter = null;
-      try
+      try (
+            Writer conciseWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME_CONCISE), "utf-8"));
+            Writer verboseWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME_VERBOSE), "utf-8")))
       {
-         conciseWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME_CONCISE), "utf-8"));
-         verboseWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FILE_NAME_VERBOSE), "utf-8"));
          for (String moveSummary : pMoveSummaries)
          {
             // Write out verbose entry to verbose file
@@ -631,31 +650,6 @@ public class TicTacToeManager
       catch (IOException e)
       {
          RenderingHelper.renderLoggingLine("writeLogFiles: problem writing. e=" + e);
-      }
-      finally
-      {
-         if (null != conciseWriter)
-         {
-            try
-            {
-               conciseWriter.close();
-            }
-            catch (IOException e)
-            {
-               // bury this exception
-            }
-         }
-         if (null != verboseWriter)
-         {
-            try
-            {
-               verboseWriter.close();
-            }
-            catch (IOException e)
-            {
-               // bury this exception
-            }
-         }
       }
    }
 
@@ -738,42 +732,23 @@ public class TicTacToeManager
    private Set<String> getMovesToAvoidSetFromConciseLog()
    {
       Set<String> returnVal = new TreeSet<>();
-      BufferedReader br = null;
-      try
+      File conciseFile = new File(FILE_NAME_CONCISE);
+      boolean isFileExists = conciseFile.exists();
+      if (isFileExists)
       {
-         File conciseFile = new File(FILE_NAME_CONCISE);
-         boolean isFileExists = conciseFile.exists();
-         if (isFileExists)
+         try (
+               final FileInputStream in = new FileInputStream(FILE_NAME_CONCISE);
+               BufferedReader br = new BufferedReader(new InputStreamReader(in, "utf-8")))
          {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(FILE_NAME_CONCISE), "utf-8"));
-            //  line like this: 13597
             String thisLine;
             while ((thisLine = br.readLine()) != null)
             {
                returnVal.add(thisLine);
             }
          }
-         else
+         catch (IOException e)
          {
-            // else, we may be here for the first time, so would not expect a file to exist
-         }
-      }
-      catch (IOException e)
-      {
-         RenderingHelper.renderLoggingLine("getMovesToAvoidSetFromConciseLog: problem. e=" + e);
-      }
-      finally
-      {
-         if (null != br)
-         {
-            try
-            {
-               br.close();
-            }
-            catch (IOException e)
-            {
-               // bury this exception
-            }
+            RenderingHelper.renderLoggingLine("error e=" + e);
          }
       }
       return returnVal;
