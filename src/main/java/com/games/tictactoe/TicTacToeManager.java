@@ -142,7 +142,7 @@ public class TicTacToeManager
 
          // Look for an acceptable next move
          final List<Integer> emptyCells = tttBoard.getCellsOfGivenStatus(CellStatusEnum.UNSELECTED);
-         Integer acceptedMove = null;
+         Optional<Integer> maybeAcceptedMove = Optional.empty();
          for (Integer possibleNewCell : emptyCells)
          {
             Optional<Integer> optionalCell = Optional.of(possibleNewCell);
@@ -150,19 +150,19 @@ public class TicTacToeManager
             boolean isFoundInBadList = getMovesToAvoidSet().contains(proposedMoveSet);
             if (!isFoundInBadList)
             {
-               acceptedMove = possibleNewCell;
+               maybeAcceptedMove = Optional.of(possibleNewCell);
                break;
             }
          }
 
-         if (acceptedMove == null)
+         if (maybeAcceptedMove.isPresent())
          {
             // Give up the game - no acceptable moves found
-            returnVal = new TicTacToeMove(true);
+            returnVal = new TicTacToeMove(maybeAcceptedMove.get(), machineSelection);
          }
          else
          {
-            returnVal = new TicTacToeMove(acceptedMove, machineSelection);
+            returnVal = new TicTacToeMove(true);
          }
       }
       return returnVal;
@@ -534,7 +534,7 @@ public class TicTacToeManager
       if (isRecordInfo)
       {
          final TicTacToeBoard tttBoard = getTttBoard(pGameBoard);
-         Optional<Integer> nullCell = Optional.ofNullable(null);
+         Optional<Integer> nullCell = Optional.empty();
 
          final String moveSummary = getMoveSummaryConcise(tttBoard.getMoveHistory(), nullCell);
          // Remove the last move, which would've been from the Human, since that won't come into play when
