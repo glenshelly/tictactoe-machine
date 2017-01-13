@@ -6,6 +6,7 @@ import com.games.RenderingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A value object that simply contains board information
@@ -41,10 +42,7 @@ public class TicTacToeBoard
    @Override
    public void applyChosenMove(final IGameMove pMove)
    {
-      if (pMove == null)
-      {
-         throw new IllegalArgumentException("move may not be null");
-      }
+      Objects.requireNonNull(pMove, "move may not be null");
       if (pMove instanceof TicTacToeMove)
       {
          TicTacToeMove tttMove = (TicTacToeMove) pMove;
@@ -78,10 +76,7 @@ public class TicTacToeBoard
     */
    public boolean isGameWon(CellStatusEnum pCellStatus)
    {
-      if (null == pCellStatus)
-      {
-         throw new IllegalArgumentException("cellStatusEnum may not be null");
-      }
+      Objects.requireNonNull(pCellStatus, "cellStatusEnum may not be null");
 
       // There are 8 possible ways to win
       return
@@ -106,10 +101,7 @@ public class TicTacToeBoard
     */
    public List<Integer> getCellsOfGivenStatus(final CellStatusEnum pCellStatus)
    {
-      if (null == pCellStatus)
-      {
-         throw new IllegalArgumentException("cellStatusEnum may not be null");
-      }
+      Objects.requireNonNull(pCellStatus, "cellStatusEnum may not be null");
 
       List<Integer> returnValue = new ArrayList<>();
       for (int cellNumber = 1; cellNumber <= MAX_CELLS; cellNumber++)

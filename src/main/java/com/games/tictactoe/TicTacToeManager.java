@@ -21,6 +21,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
@@ -87,14 +88,8 @@ public class TicTacToeManager
     */
    public IGameMove getNextMove(final PlayerEnum pPlayer, IGameBoard pGameBoard)
    {
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
-      if (null == pPlayer)
-      {
-         throw new IllegalArgumentException("player may not be null");
-      }
+      Objects.requireNonNull(pGameBoard, "game board may not be null");
+      Objects.requireNonNull(pPlayer, "player may not be null");
       final IGameMove gameMove;
       if (pPlayer == PlayerEnum.APPLICATION)
       {
@@ -334,14 +329,8 @@ public class TicTacToeManager
          final PlayerEnum pMostRecentPlayer, IGameBoard pGameBoard
    )
    {
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
-      if (null == pMostRecentPlayer)
-      {
-         throw new IllegalArgumentException("player may not be null");
-      }
+      Objects.requireNonNull(pGameBoard, "game board may not be null");
+      Objects.requireNonNull(pMostRecentPlayer, "player may not be null");
 
       final TicTacToeBoard tttBoard = getTttBoard(pGameBoard);
       GameStatusEnum gameStatus;
@@ -369,25 +358,13 @@ public class TicTacToeManager
    @Override
    public void renderFinalResults(final GameStatusInfo pGameStatusInfo, IGameBoard pGameBoard)
    {
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
-      if (null == pGameStatusInfo)
-      {
-         throw new IllegalArgumentException("GameStatusInfo may not be null");
-      }
+      Objects.requireNonNull(pGameBoard, "game board may not be null");
+      Objects.requireNonNull("GameStatusInfo may not be null");
 
       GameStatusEnum gameStatusEnum = pGameStatusInfo.getGameStatus();
-      if (gameStatusEnum == null)
-      {
-         throw new IllegalArgumentException("gameStatusEnum may not be null");
-      }
+      Objects.requireNonNull(gameStatusEnum, "gameStatusEnum may not be null");
       PlayerEnum finalPlayer = pGameStatusInfo.getFinalPlayer();
-      if (finalPlayer == null)
-      {
-         throw new IllegalArgumentException("finalPlayer may not be null");
-      }
+      Objects.requireNonNull(finalPlayer, "finalPlayer may not be null");
 
       // Get the text to render
       final String gameOverLead = "************* GAME OVER: ";
@@ -443,10 +420,7 @@ public class TicTacToeManager
    @Override
    public void renderBoard(final IGameBoard pGameBoard)
    {
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
+      Objects.requireNonNull(pGameBoard, "game board may not be null");
 
       final TicTacToeBoard tttBoard = getTttBoard(pGameBoard);
       // In a real project, I'd probably use apache StringUtils.repeat() to do this
@@ -509,24 +483,12 @@ public class TicTacToeManager
    public void saveResults(IGameBoard pGameBoard, final GameStatusInfo pGameStatusInfo)
    {
 
-      if (null == pGameBoard)
-      {
-         throw new IllegalArgumentException("game board may not be null");
-      }
-      if (null == pGameStatusInfo)
-      {
-         throw new IllegalArgumentException("GameStatusInfo may not be null");
-      }
+      Objects.requireNonNull(pGameBoard, "game board may not be null");
+      Objects.requireNonNull(pGameStatusInfo, "GameStatusInfo may not be null");
       final PlayerEnum finalPlayer = pGameStatusInfo.getFinalPlayer();
-      if (finalPlayer == null)
-      {
-         throw new IllegalArgumentException("the final play may not be null here");
-      }
+      Objects.requireNonNull(finalPlayer, "the final play may not be null here");
       final GameStatusEnum gameStatus = pGameStatusInfo.getGameStatus();
-      if (gameStatus == null)
-      {
-         throw new IllegalArgumentException("the game status may not be null");
-      }
+      Objects.requireNonNull(gameStatus, "the game status may not be null");
 
       final boolean isApplicationLost = finalPlayer == PlayerEnum.APPLICATION && (gameStatus == GameStatusEnum.QUIT);
       final boolean isHumanWon = finalPlayer == PlayerEnum.HUMAN && (gameStatus == GameStatusEnum.WON);
